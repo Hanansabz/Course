@@ -23,3 +23,4 @@ sorted_d = sort_dictionary_by_value(d, n)
 for key, value in sorted_d.items():
     print("Words: " + key + " Appears " + str(value) + " times")
 
+input("Press Enter to exit...")
