@@ -21,3 +21,4 @@ print(f"Decimal: {number}")
 print(f"Binary: {binary}")          
 print(f"Negative Binary: {negative}")
 
+input("Press Enter to exit...")
