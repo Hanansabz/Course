@@ -10,6 +10,8 @@ virustotal_api_key = "cd6325cbf1bd497e7260a5685d37a4772f4784dcad0b0fa47449a224b9
 
 def scan_file(file_path):
     response = send_scan_requests(file_path)
+    # if not response:
+    #     return  # skip this file completely
     is_virus = get_report(scan_id=response['scan_id'])
     if is_virus:
         print(f"File {file_path} is a VIRUS!!!")
@@ -33,27 +35,36 @@ def send_scan_requests(file_path):
         raise Exception("Failed to scan file with VirusTotal API")
 
 
-
 def get_report(scan_id):
 
     params = {'apikey': virustotal_api_key, 'resource': scan_id}
-
     response = requests.get(virustotal_api_report_url, params=params)
-    if not response:
-        raise Exception("Failed to get report from VirusTotal API")
+    # if response.status_code != 200:
+    #     print(f"Failed to scan file ({response.status_code}), skipping...")
+    #     return None
 
-    
     if response.status_code == 200:
         result = response.json()
         if result['response_code'] == 0:
-            print("Report is not ready yet. Waiting for 15 seconds before retrying...")
-            time.sleep(15)
+            print("Report is not ready yet. Waiting for 30 seconds before retrying...")
+            time.sleep(30)
             return get_report(scan_id)
-        else:
+        elif result['response_code'] == 1:
             positives = result['positives']
             total = result['total']
             print(f"Scan results: {positives} positives out of {total} scans.")
             return positives > 0
+        elif result['response_code'] == -2:
+            print("Report is queued for analysis. Waiting for 30 seconds before retrying...")
+            time.sleep(30)
+            return get_report(scan_id)
+        else:
+            print("Unexpected response code from VirusTotal API:", result['response_code'])
+            return None
+    elif response.status_code == 204:
+        print("Rate limit exceeded. Waiting for 60 seconds before retrying...")
+        time.sleep(60)
+        return get_report(scan_id)
     else:
         print("Unexpected error occurred while fetching report from VirusTotal API", response.status_code)
 
