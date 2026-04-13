@@ -9,8 +9,6 @@ virustotal_api_key = "cd6325cbf1bd497e7260a5685d37a4772f4784dcad0b0fa47449a224b9
 
 def scan_file(file_path):
     response = send_scan_requests(file_path)
-    # if not response:
-    #     return  # skip this file completely
     is_virus = get_report(scan_id=response['scan_id'])
     if is_virus:
         print(f"File {file_path} is a VIRUS!!!")
