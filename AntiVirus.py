@@ -100,6 +100,6 @@ while keepRunning:
                         most_recent_file = entry.name
                         most_recent_time = mod_time
                         
-            print(f"Most recent file: {most_recent_file}")
+            print(f"Most recent file: {most_recent_file}, downloaded at {most_recent_time}")
             iterate_files(folder_path = most_recent_file)
         
