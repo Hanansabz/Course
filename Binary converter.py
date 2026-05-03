@@ -10,15 +10,22 @@ def binary_to_negative_binary(binary):
     return negative_binary 
 
 
+def main():
+    try:
+        number = int(input("Enter a decimal number: "))
+        bits = int(input("Enter the number of bits for the binary representation: "))
 
-number = int(input("Enter a decimal number: "))
-bits = int(input("Enter the number of bits for the binary representation: "))
+        binary = decimal_to_binary(number, bits)
+        negative = binary_to_negative_binary(binary)
 
-binary = decimal_to_binary(number, bits)
-negative = binary_to_negative_binary(binary)
+        print(f"Decimal: {number}")
+        print(f"Binary: {binary}")          
+        print(f"Negative Binary: {negative}")
+    except ValueError:
+        print("Invalid input. Please enter a valid decimal number and number of bits.")
+        main()  # Restart the main function to allow the user to try again
 
-print(f"Decimal: {number}")
-print(f"Binary: {binary}")          
-print(f"Negative Binary: {negative}")
+if __name__ == "__main__":
+    main()
 
 input("Press Enter to exit...")
