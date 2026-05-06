@@ -1,15 +1,18 @@
-from threading import Thread 
+from threading import Thread, Lock
 counter = 0 
+counter_lock = Lock()
 
 def increment_counter():
     global counter 
     for _ in range(1000000):
-        counter += 1
+        with counter_lock:
+            counter += 1
 
 def decrement_counter():
     global counter
     for _ in range(1000000):
-        counter -= 1
+        with counter_lock:
+            counter -= 1
 
 if __name__ == "__main__":
     thread1 = Thread(target=increment_counter)
