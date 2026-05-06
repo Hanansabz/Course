@@ -6,14 +6,14 @@ def increment_counter():
     for _ in range(1000000):
         counter += 1
 
-def increment_counter_thread():
+def decrement_counter():
     global counter
     for _ in range(1000000):
         counter -= 1
 
 if __name__ == "__main__":
     thread1 = Thread(target=increment_counter)
-    thread2 = Thread(target=increment_counter_thread)
+    thread2 = Thread(target=decrement_counter)
 
     thread1.start()
     thread2.start()
