@@ -30,6 +30,7 @@ def top_words_in_file(file_path, n):
 file_path = "alice.txt"
 count_words_in_file(file_path)
 
-
 input("Press Enter to see the top 10 words in the file...")
 top_words_in_file(file_path, 10)
+
+input("Press Enter to exit...")
