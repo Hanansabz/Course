@@ -11,7 +11,8 @@ def count_words_in_file(file_path):
         print("{} was found {} times".format(word, times))
 
 def take_off_punctuation(word):
-    return word.strip(" . , ! ` ? ' \ / () : ; -- ")
+    word = word.lower()
+    return word.strip(" . , ! ` ? ' () : ; -- ")
  
 def top_words_in_file(file_path, n):
     print("Top {n} words in {file_path} were:".format(n=n, file_path=file_path))
