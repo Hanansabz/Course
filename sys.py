@@ -42,4 +42,4 @@ if __name__ == "__main__":
         except ValueError:
             print("Error: top_n must be an integer.")
 
-input("Press Enter to exit...")
+input("[~Use a Terminal for this application~] Press Enter to exit...")
