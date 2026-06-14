@@ -1,6 +1,6 @@
 import socket 
 
-def receive_files_server(server_host, server_port):
+def receive_files_server(save_path, server_host, server_port):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     server_socket.bind((server_host, server_port))
@@ -16,7 +16,7 @@ def receive_files_server(server_host, server_port):
 
         received = 0
 
-        with open('Received_file', 'wb') as f:
+        with open(save_path + '/Received_file', 'wb') as f:
             while received < file_size:
                 data = client_socket.recv(1024)
                 if not data:
@@ -30,4 +30,4 @@ def receive_files_server(server_host, server_port):
         client_socket.close()
         print("Closing the connection...")
 
-receive_files_server('localhost', 8080) 
+receive_files_server(r'C:\Users\Hanan\Course\Received_From_Client', 'localhost', 8000) 

@@ -1,11 +1,8 @@
 import socket 
 import os
 
-def send_files_client(file_path):
+def send_files_client(file_path, server_host, server_port):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Create a TCP/IPv4 socket
-    server_host = 'localhost'
-    server_port = 8080
-    
     client_socket.connect((server_host, server_port))
     print(f"Connected to {server_host}: {server_port}")
     
@@ -33,7 +30,10 @@ def send_files_client(file_path):
         client_socket.close()
 
 
-input_file_path = input("Enter the path of the file to send: [Ex: C:/Users/Hanan/Downloads/alice.txt]: ")
-send_files_client(input_file_path)
+file_path = r"C:\Users\Hanan\Documents\exmp\alice.txt"
+server_host =  'localhost'
+server_port = 8000
+
+send_files_client(file_path, server_host, server_port)
 
 
