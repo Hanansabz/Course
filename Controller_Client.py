@@ -22,13 +22,13 @@ def send(msg):
 def on_press(key):
     try:
         send({"type": "key", "key": key.char, "action": "down"})
-    except:
+    except AttributeError:
         send({"type": "key", "key": str(key), "action": "down"})
 
 def on_release(key):
     try:
         send({"type": "key", "key": key.char, "action": "up"})
-    except:
+    except AttributeError:
         send({"type": "key", "key": str(key), "action": "up"})
 
 def on_move(x, y):
