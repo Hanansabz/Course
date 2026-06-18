@@ -1,19 +1,16 @@
 import socket
+from shared.networking import create_server_socket, accept_client, DEFAULT_BUFFER_SIZE
+
 
 def receive_file(save_path, host, port):
+    server_socket = create_server_socket(host=host, port=port)
 
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((host, port))
-    server_socket.listen(1)
+    client_socket, client_address = accept_client(server_socket)
 
-    client_socket, client_address = server_socket.accept()
-    print(f"Connection established with {client_address}")
-
-    data = client_socket.recv(1024)
+    data = client_socket.recv(DEFAULT_BUFFER_SIZE)
     print("received", data)
 
     # with open(save_path, "wb") as f:
     #     f.write(data)
 
 receive_file("test.txt", "127.0.0.1", 8080)
-

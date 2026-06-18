@@ -1,19 +1,14 @@
 import socket
 from pynput.keyboard import Controller as KeyboardController, Key
 from pynput.mouse import Controller as MouseController, Button
-
+from shared.networking import create_server_socket, accept_client
 
 
 def start_connection(server_host, server_port):
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    server_socket.bind((server_host, server_port))
-    server_socket.listen(1)
-    print(f"Server listening on {server_host}: {server_port}")
+    server_socket = create_server_socket(host=server_host, port=server_port)
 
     while True:
-        client_socket, client_address = server_socket.accept()
-        print(f"Connection established with {client_address}")
+        client_socket, client_address = accept_client(server_socket)
         
 
 
