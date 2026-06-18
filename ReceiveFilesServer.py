@@ -1,6 +1,13 @@
-import socket 
+import socket
+import os
+
+MAX_FILE_SIZE = 100 * 1024 * 1024  # 100 MB limit
 
 def receive_files_server(save_path, server_host, server_port):
+    save_path = os.path.realpath(save_path)
+    if not os.path.isdir(save_path):
+        raise ValueError(f"Save path does not exist or is not a directory: {save_path}")
+
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     server_socket.bind((server_host, server_port))
@@ -12,11 +19,16 @@ def receive_files_server(save_path, server_host, server_port):
         print(f"Connection established with {client_address}")
 
         file_size = int.from_bytes(client_socket.recv(4), 'big')
+        if file_size > MAX_FILE_SIZE:
+            print(f"Rejected file from {client_address}: size {file_size} exceeds limit")
+            client_socket.close()
+            continue
         print(f"Expecting to receive a file of size: {file_size} bytes")
 
         received = 0
+        output_path = os.path.join(save_path, 'Received_file')
 
-        with open(save_path + '/Received_file', 'wb') as f:
+        with open(output_path, 'wb') as f:
             while received < file_size:
                 data = client_socket.recv(1024)
                 if not data:
