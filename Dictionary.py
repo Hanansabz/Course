@@ -16,9 +16,21 @@ def sort_dictionary_by_value(d, n):
     sorted_d = dict(l) # Convert the list of tuples back to a dictionary
     return sorted_d
 
-n = int(input("Enter the number of top words to display: "))
+try:
+    n = int(input("Enter the number of top words to display: "))
+except ValueError:
+    print("Error: please enter a valid integer.")
+    input("Press Enter to exit...")
+    exit(1)
+
 file_name = "C://Users//Hanan//Course//Storytext.txt"
-d = read_file_content_to_dictionary(file_name)
+try:
+    d = read_file_content_to_dictionary(file_name)
+except FileNotFoundError:
+    print(f"Error: file '{file_name}' not found.")
+    input("Press Enter to exit...")
+    exit(1)
+
 sorted_d = sort_dictionary_by_value(d, n)
 for key, value in sorted_d.items():
     print("Words: " + key + " Appears " + str(value) + " times")

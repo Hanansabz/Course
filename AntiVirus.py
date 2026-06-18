@@ -8,9 +8,16 @@ virustotal_api_key = "cd6325cbf1bd497e7260a5685d37a4772f4784dcad0b0fa47449a224b9
 
 
 def scan_file(file_path):
-    response = send_scan_requests(file_path)
+    try:
+        response = send_scan_requests(file_path)
+    except (OSError, requests.RequestException) as e:
+        print(f"Error scanning file {file_path}: {e}")
+        return
+
     is_virus = get_report(scan_id=response['scan_id'])
-    if is_virus:
+    if is_virus is None:
+        print(f"Could not determine status of {file_path} (report unavailable).")
+    elif is_virus:
         print(f"File {file_path} is a VIRUS!!!")
     else:
         print(f"File {file_path} is CLEAN.")
@@ -18,8 +25,9 @@ def scan_file(file_path):
 def send_scan_requests(file_path):
     params = {'apikey': virustotal_api_key}
 
-    file_content = open(file_path, 'rb').read()
     file_name = os.path.basename(file_path)
+    with open(file_path, 'rb') as f:
+        file_content = f.read()
     files = {'file': (file_name, file_content)}
     print("Scanning file: ", file_name)
     response = requests.post(virustotal_api_scan_url, files=files, params=params)
@@ -28,7 +36,9 @@ def send_scan_requests(file_path):
         result = response.json()
         return result
     else:
-        raise Exception("Failed to scan file with VirusTotal API")
+        raise requests.RequestException(
+            f"VirusTotal API scan failed (HTTP {response.status_code}): {response.text}"
+        )
 
 
 def get_report(scan_id):
@@ -51,14 +61,17 @@ def get_report(scan_id):
             time.sleep(30)
             return get_report(scan_id)
         else:
-            print("Unexpected response code from VirusTotal API:", result['response_code'])
-            return None
+            raise RuntimeError(
+                f"Unexpected VirusTotal response code: {result['response_code']}"
+            )
     elif response.status_code == 204:
         print("Rate limit exceeded. Waiting for 60 seconds before retrying...")
         time.sleep(60)
         return get_report(scan_id)
     else:
-        print("Unexpected error occurred while fetching report from VirusTotal API", response.status_code)
+        raise requests.RequestException(
+            f"VirusTotal API report failed (HTTP {response.status_code}): {response.text}"
+        )
 
 
 def iterate_files(folder_path):
@@ -84,13 +97,13 @@ while keepRunning:
             print("New file detected! Scanning for viruses...")
             #virus scanning function goes here
             
-            directory_path = os.chdir(r"C:\Users\Hanan\Downloads")
+            download_dir = r"C:\Users\Hanan\Downloads"
+            os.chdir(download_dir)
 
             most_recent_file = None
             most_recent_time = 0
 
-            # iterate over the files in the directory using os.scandir
-            for entry in os.scandir(directory_path):
+            for entry in os.scandir(download_dir):
                 if entry.is_file():
                     mod_time = entry.stat().st_mtime_ns
                     if mod_time > most_recent_time:
