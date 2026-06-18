@@ -39,7 +39,7 @@ def controll_mouse(x, y, button_name, action):
     elif action == "up":
         mouse.release(btn)
 
-server_host = 'localhost' 
+server_host = "0.0.0.0" 
 server_port = 8000  
 start_connection(server_host, server_port)
 
