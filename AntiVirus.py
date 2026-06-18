@@ -4,7 +4,10 @@ import time
 
 virustotal_api_scan_url = "https://www.virustotal.com/vtapi/v2/file/scan"
 virustotal_api_report_url = "https://www.virustotal.com/vtapi/v2/file/report"
-virustotal_api_key = "cd6325cbf1bd497e7260a5685d37a4772f4784dcad0b0fa47449a224b96fd096"
+virustotal_api_key = os.environ.get("VIRUSTOTAL_API_KEY", "")
+
+if not virustotal_api_key:
+    raise EnvironmentError("VIRUSTOTAL_API_KEY environment variable is not set.")
 
 
 def scan_file(file_path):
