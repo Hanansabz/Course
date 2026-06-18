@@ -1,30 +1,16 @@
+from shared.word_counting import count_words, top_n_words
+
 
 def count_words_in_file(file_path):
-    count = {}
-    for w in open(file_path).read().split():
-        w = take_off_punctuation(w)
-        if w in count:
-            count[w] += 1
-        else:
-            count[w] = 1
-    for word, times in count.items():
+    word_freq = count_words(file_path)
+    for word, times in word_freq.items():
         print("{} was found {} times".format(word, times))
 
-def take_off_punctuation(word):
-    word = word.lower()
-    return word.strip(" . , ! ` ? ' () : ; -- ")
- 
+
 def top_words_in_file(file_path, n):
     print("Top {n} words in {file_path} were:".format(n=n, file_path=file_path))
-    count = {}
-    for w in open(file_path).read().split():
-        w = take_off_punctuation(w)
-        if w in count:
-            count[w] += 1
-        else:
-            count[w] = 1
-    sorted_count = sorted(count.items(), key=lambda x: x[1], reverse=True)
-    for word, times in sorted_count[:n]:
+    word_freq = count_words(file_path)
+    for word, times in top_n_words(word_freq, n):
         print(" {} was found {} times".format(word, times))
 
 

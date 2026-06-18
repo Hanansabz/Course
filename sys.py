@@ -1,27 +1,12 @@
 import sys
-import re
+from shared.word_counting import count_words, print_word_frequencies
+
 
 def word_frequency(file_name, top_n):
     try:
-        with open(file_name, 'r', encoding='utf-8') as file:
-            text = file.read()
-            words = text.split()
-            word_freq = {}     #{word:count}
-
-            for word in words:
-                word = re.sub(r'[^\w\s]', '', word).lower()  # Remove punctuation and convert to lowercase
-
-                if word in word_freq:
-                    word_freq[word] += 1
-                else:
-                    word_freq[word] = 1
-
-        sorted_words = sorted(word_freq.items(), key=lambda x: x[1], reverse=True)   #("Hello": 5,"word": 3)
-
+        word_freq = count_words(file_name)
         print(f"Top {top_n} Most Frequent Words:")
-        for i, (word, freq) in enumerate(sorted_words[:top_n], 1):
-            print(f"{i}. {word} - {freq} times")
-
+        print_word_frequencies(word_freq, top_n=top_n)
     except FileNotFoundError:
         print(f"Error: The file '{file_name}' was not found.")
     except Exception as e:
