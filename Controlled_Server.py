@@ -14,7 +14,7 @@ def start_connection(server_host, server_port):
     while True:
         client_socket, client_address = server_socket.accept()
         print(f"Connection established with {client_address}")
-
+        
 
 
 def controll_keyboard(key_name, action):
@@ -39,7 +39,7 @@ def controll_mouse(x, y, button_name, action):
     elif action == "up":
         mouse.release(btn)
 
-server_host = "0.0.0.0" 
+server_host = "localhost" 
 server_port = 8000  
 start_connection(server_host, server_port)
 
