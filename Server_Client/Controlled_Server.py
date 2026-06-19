@@ -12,10 +12,17 @@ def start_connection(server_host, server_port):
     print(f"Server listening on {server_host}: {server_port}")
 
     while True:
-        client_socket, client_address = server_socket.accept()
-        print(f"Connection established with {client_address}")
-        
-
+        try:
+            client_socket, client_address = server_socket.accept()
+            print(f"Connection established with {client_address}")
+            print("Waiting to recv data...")
+            data = client_socket.recv(1024)
+            print("got:", data)
+        except Exception as e:
+            print(f"Error as {e}")
+            
+keyboard = KeyboardController()
+mouse = MouseController()
 
 def controll_keyboard(key_name, action):
     if action == "down":
@@ -43,5 +50,3 @@ server_host = "localhost"
 server_port = 8000  
 start_connection(server_host, server_port)
 
-keyboard = KeyboardController()
-mouse = MouseController()
