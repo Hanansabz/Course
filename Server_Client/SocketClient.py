@@ -21,3 +21,5 @@ def start_echo_client():
 
     print("Closing the connection...")
     client_socket.close()
+
+start_echo_client()
