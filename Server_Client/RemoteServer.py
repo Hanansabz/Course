@@ -7,14 +7,14 @@ keyboard = None
 mouse = None
 
 def control_keyboard(key_name, action):
+    if isinstance(key_name, str) and key_name.startswith("Key."):
+        key_name = key_name[4:]
+
     try:
-        # Try to find a special key 
         key_to_use = getattr(Key, key_name.lower())
     except AttributeError:
-        # If that fails, it is just a normal letter or number
         key_to_use = key_name
 
-    # Run the action
     if action == "key_press":
         keyboard.press(key_to_use)
     elif action == "key_release":
@@ -55,12 +55,10 @@ def handle_client(conn, addr):
                 print("Client disconnected")
                 break
 
-            buffer += data.decode(errors="ignore")
+            buffer += data.decode("utf-8", errors="ignore")
 
             while "\n" in buffer:
                 message, buffer = buffer.split("\n", 1)
-                if not message.strip():
-                    continue
 
                 try:
                     event = json.loads(message)
@@ -74,10 +72,16 @@ def handle_client(conn, addr):
 
                 if event_type == "key_press":
                     key_name = event_data.get("key")
-                    control_keyboard(key_name, "key_press")
+                    try:
+                        control_keyboard(key_name, "key_press")
+                    except Exception as exc:
+                        print(f"Keyboard error on press {key_name}: {exc}")
                 elif event_type == "key_release":
                     key_name = event_data.get("key")
-                    control_keyboard(key_name, "key_release")
+                    try:
+                        control_keyboard(key_name, "key_release")
+                    except Exception as exc:
+                        print(f"Keyboard error on release {key_name}: {exc}")
                 elif event_type == "mouse_move":
                     x = event_data.get("x")
                     y = event_data.get("y")
