@@ -1,82 +1,115 @@
 import socket
 import json
-from pynput.keyboard import Controller as KeyboardController, Key
+from pynput.keyboard import Controller as KeyboardController
 from pynput.mouse import Controller as MouseController, Button
 
-keyboard = KeyboardController()
-mouse = MouseController()
+keyboard = None
+mouse = None
 
-def controll_keyboard(key_name, action):
+def control_keyboard(key_name, action):
     if action == "key_press":
         keyboard.press(key_name)
     elif action == "key_release":
         keyboard.release(key_name)
 
-
-def controll_mouse(x, y, button_name, action):
+def control_mouse(x, y, button_name, action):
     mouse.position = (x, y)
 
-    if button_name == "Button.left":
+    if button_name in ("Button.left", "left"):
         btn = Button.left
-    elif button_name == "Button.right":
+    elif button_name in ("Button.right", "right"):
         btn = Button.right
     else:
+        btn = None
+
+    if btn is None:
         return
 
-    if action == "True":
+    if action in (True, "pressed", "press", "down"):
         mouse.press(btn)
-    elif action == "False":
+    elif action in (False, "released", "release", "up"):
         mouse.release(btn)
 
-def main(server_host, server_port):
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((server_host, server_port))
-    server.listen(1)
 
-    print("Waiting for connection...")
-
-    conn, addr = server.accept()
-
+def handle_client(conn, addr):
     print("Connected:", addr)
 
+    global keyboard, mouse
+    keyboard = KeyboardController()
+    mouse = MouseController()
+
     buffer = ""
+    try:
+        while True:
+            data = conn.recv(1024).decode()
 
-    while True:
-        data = conn.recv(1024).decode()
+            if not data:
+                break
 
-        if not data:
-            break
+            buffer += data
 
-        buffer += data
+            while "\n" in buffer:
+                message, buffer = buffer.split("\n", 1)
+                try:
+                    event = json.loads(message)
+                except json.JSONDecodeError:
+                    print("Bad JSON:", message)
+                    continue
 
-        while "\n" in buffer:
-            message, buffer = buffer.split("\n", 1)
+                event_type = event.get("type")
+                event_data = event.get("data", {})
 
-            try:
-                event = json.loads(message)
-                # event_type = event["type"]
-                # event_data = event["data"]
+                if event_type == "key_press":
+                    key_name = event_data.get("key")
+                    control_keyboard(key_name, "key_press")
+                elif event_type == "key_release":
+                    key_name = event_data.get("key")
+                    control_keyboard(key_name, "key_release")
+                elif event_type == "mouse_move":
+                    x = event_data.get("x")
+                    y = event_data.get("y")
+                    if x is not None and y is not None:
+                        mouse.position = (x, y)
+                elif event_type == "mouse_click":
+                    x = event_data.get("x")
+                    y = event_data.get("y")
+                    button_name = event_data.get("button")
+                    action = event_data.get("pressed")
+                    control_mouse(x, y, button_name, action)
+                elif event_type == "mouse_scroll":
+                    dx = event_data.get("dx", 0)
+                    dy = event_data.get("dy", 0)
+                    mouse.scroll(dx, dy)
+                else:
+                    print("Unknown event:", event)
 
-                # if event_type == "key_press":
-                #     key_name = event_data["key"]
-                #     action = "key_press"
-                #     controll_keyboard(key_name, action)
-                # elif event_type == "key_release":
-                #     key_name = event_data["key"]
-                #     action = "key_release"
-                #     controll_keyboard(key_name, action)
-                # elif event_type == "mouse_move" + "mouse_scroll" + "mouse_click" :
-                #     x = event_data["x"]
-                #     y = event_data["y"]
-                #     button_name = "button"
-                #     action = "pressed"
                 print(event)
 
-            except json.JSONDecodeError:
-                print("Bad JSON:", message)
+    except Exception as e:
+        print("Connection error:", e)
+
+    finally:
+        conn.close()
+        print("Connection closed")
 
 
+def start_server():
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-server_host = '0.0.0.0'
-server_port = 8000
-main(server_host, server_port)
+    server.bind((HOST, PORT))
+    server.listen(1)
+
+    print("Server running on", PORT)
+
+    while True:
+        try:
+            conn, addr = server.accept()
+            handle_client(conn, addr)
+
+        except Exception as e:
+            print("Server error:", e)
+
+HOST = "192.168.1.181"
+PORT = 8000
+start_server()
