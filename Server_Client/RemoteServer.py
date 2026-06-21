@@ -1,16 +1,24 @@
 import socket
 import json
-from pynput.keyboard import Controller as KeyboardController
+from pynput.keyboard import Controller as KeyboardController, Key
 from pynput.mouse import Controller as MouseController, Button
 
 keyboard = None
 mouse = None
 
 def control_keyboard(key_name, action):
+    try:
+        # Try to find a special key 
+        key_to_use = getattr(Key, key_name.lower())
+    except AttributeError:
+        # If that fails, it is just a normal letter or number
+        key_to_use = key_name
+
+    # Run the action
     if action == "key_press":
-        keyboard.press(key_name)
+        keyboard.press(key_to_use)
     elif action == "key_release":
-        keyboard.release(key_name)
+        keyboard.release(key_to_use)
 
 def control_mouse(x, y, button_name, action):
     mouse.position = (x, y)
@@ -41,17 +49,22 @@ def handle_client(conn, addr):
     buffer = ""
     try:
         while True:
-            data = conn.recv(1024).decode()
+            data = conn.recv(1024)
 
             if not data:
+                print("Client disconnected")
                 break
 
-            buffer += data
+            buffer += data.decode(errors="ignore")
 
             while "\n" in buffer:
                 message, buffer = buffer.split("\n", 1)
+                if not message.strip():
+                    continue
+
                 try:
                     event = json.loads(message)
+                    print("EVENT:", event)
                 except json.JSONDecodeError:
                     print("Bad JSON:", message)
                     continue
