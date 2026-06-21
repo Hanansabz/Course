@@ -54,22 +54,23 @@ def main(server_host, server_port):
 
             try:
                 event = json.loads(message)
-                event_type = event["type"]
-                event_data = event["data"]
+                # event_type = event["type"]
+                # event_data = event["data"]
 
-                if event_type == "key_press":
-                    key_name = event_data["key"]
-                    action = "key_press"
-                    controll_keyboard(key_name, action)
-                elif event_type == "key_release":
-                    key_name = event_data["key"]
-                    action = "key_release"
-                    controll_keyboard(key_name, action)
-                elif event_type == "mouse_move" + "mouse_scroll" + "mouse_click" :
-                    x = event_data["x"]
-                    y = event_data["y"]
-                    button_name = "button"
-                    action = "pressed"
+                # if event_type == "key_press":
+                #     key_name = event_data["key"]
+                #     action = "key_press"
+                #     controll_keyboard(key_name, action)
+                # elif event_type == "key_release":
+                #     key_name = event_data["key"]
+                #     action = "key_release"
+                #     controll_keyboard(key_name, action)
+                # elif event_type == "mouse_move" + "mouse_scroll" + "mouse_click" :
+                #     x = event_data["x"]
+                #     y = event_data["y"]
+                #     button_name = "button"
+                #     action = "pressed"
+                print(event)
 
             except json.JSONDecodeError:
                 print("Bad JSON:", message)

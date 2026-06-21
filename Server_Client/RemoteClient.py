@@ -9,7 +9,7 @@ def connect_to_server():
     global client
 
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(("localhost", 8000))  # Change to your server IP
+    client.connect(("192.168.1.181", 8000))  # Change to your server IP
 
 
 def send_event(event_type, data):
