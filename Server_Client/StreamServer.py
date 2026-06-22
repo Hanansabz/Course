@@ -179,7 +179,7 @@ def screen_stream_server(host, port):
             conn.close()
             print('Screen stream client disconnected')
 
-HOST = "localhost"
+HOST = "0.0.0.0"
 PORT = 8000
 STREAM_PORT = 9000
 
