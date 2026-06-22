@@ -179,9 +179,7 @@ def screen_stream_server(host, port):
             conn.close()
             print('Screen stream client disconnected')
 
-HOST = "0.0.0.0"
-PORT = 8000
-STREAM_PORT = 9000
+
 
 def main(HOST, PORT):
     t1 = threading.Thread(target=start_server(HOST, PORT), daemon=True)
@@ -199,5 +197,7 @@ def main(HOST, PORT):
         print('Shutting down')
 
 
-
-main()
+HOST = "0.0.0.0"
+PORT = 8000
+STREAM_PORT = 9000
+main(HOST, PORT)
