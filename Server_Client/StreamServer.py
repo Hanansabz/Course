@@ -117,7 +117,7 @@ def handle_client(conn, addr):
         print("Connection closed")
 
 
-def start_server():
+def start_server(HOST, PORT):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
@@ -183,8 +183,8 @@ HOST = "0.0.0.0"
 PORT = 8000
 STREAM_PORT = 9000
 
-def main():
-    t1 = threading.Thread(target=start_server, daemon=True)
+def main(HOST, PORT):
+    t1 = threading.Thread(target=start_server(HOST, PORT), daemon=True)
     t2 = threading.Thread(target=screen_stream_server, args=(HOST, STREAM_PORT), daemon=True)
 
     t1.start()

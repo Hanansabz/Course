@@ -136,6 +136,6 @@ def main(HOST, PORT):
          mouse.Listener(on_move=on_move, on_click=on_click, on_scroll=on_scroll) as m_listener:
         k_listener.join()
 
-HOST = "localhost"
+HOST = "192.168.1.181"
 PORT = 8000
 main(HOST, PORT)
