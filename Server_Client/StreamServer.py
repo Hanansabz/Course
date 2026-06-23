@@ -2,8 +2,6 @@ import socket
 import json
 import threading
 import time
-import sys
-import ctypes
 from pynput.keyboard import Controller as KeyboardController, Key
 from pynput.mouse import Controller as MouseController, Button
 
@@ -11,14 +9,6 @@ from pynput.mouse import Controller as MouseController, Button
 import cv2
 import numpy as np
 from PIL import ImageGrab
-
-
-def enable_windows_dpi_awareness():
-    if sys.platform.startswith("win"):
-        try:
-            ctypes.windll.user32.SetProcessDPIAware()
-        except Exception:
-            pass
 
 keyboard = None
 mouse = None
@@ -157,8 +147,6 @@ def send_all(sock, data):
 
 
 def screen_stream_server(host, port):
-    enable_windows_dpi_awareness()
-
     srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     srv.bind((host, port))
